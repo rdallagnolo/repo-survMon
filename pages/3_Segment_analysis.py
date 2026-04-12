@@ -1,13 +1,9 @@
-import io
 import math
 from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-from reportlab.lib.pagesizes import A4, landscape
-from reportlab.lib.utils import ImageReader
-from reportlab.pdfgen import canvas
 
 from utils.data_loader import (
     load_database_cached,
@@ -498,64 +494,6 @@ def build_aggregate_metrics(window_parts: list[pd.DataFrame], selected_df: pd.Da
     }
 
 
-def build_pdf_report(figures: list[tuple[str, go.Figure]]) -> bytes:
-    buffer = io.BytesIO()
-    pdf = canvas.Canvas(buffer, pagesize=landscape(A4))
-    page_w, page_h = landscape(A4)
-
-    for title, fig in figures:
-        img_bytes = fig.to_image(format="png", scale=2)
-        img = ImageReader(io.BytesIO(img_bytes))
-
-        pdf.setFont("Helvetica-Bold", 16)
-        pdf.drawString(36, page_h - 28, title)
-
-        margin_x = 36
-        margin_bottom = 28
-        margin_top = 56
-
-        max_w = page_w - (2 * margin_x)
-        max_h = page_h - margin_top - margin_bottom
-
-        iw, ih = img.getSize()
-        scale = min(max_w / iw, max_h / ih)
-
-        draw_w = iw * scale
-        draw_h = ih * scale
-
-        x = (page_w - draw_w) / 2
-        y = margin_bottom
-
-        pdf.drawImage(
-            img,
-            x,
-            y,
-            width=draw_w,
-            height=draw_h,
-            preserveAspectRatio=True,
-            mask="auto",
-        )
-        pdf.showPage()
-
-    pdf.save()
-    buffer.seek(0)
-    return buffer.getvalue()
-
-
-def get_report_filename(selection_type: str, selected_mode: str, start_segment=None, end_segment=None, selected_segments=None) -> str:
-    mode_slug = selected_mode.lower().replace(" ", "_")
-
-    if selection_type == "Single":
-        base = f"segment_{start_segment}_{mode_slug}"
-    elif selection_type == "Range":
-        base = f"segments_{start_segment}_to_{end_segment}_{mode_slug}"
-    else:
-        joined = "_".join(str(x) for x in selected_segments)
-        base = f"segments_{joined}_{mode_slug}"
-
-    return f"{base}_report.pdf"
-
-
 # -----------------------------
 # Load base data
 # -----------------------------
@@ -860,36 +798,3 @@ with col2:
         st.plotly_chart(result["fig_speed_offline"], theme=None, use_container_width=True)
     else:
         st.plotly_chart(result["fig_speed"], theme=None, use_container_width=True)
-
-
-# -----------------------------
-# PDF report
-# -----------------------------
-if result["fig_speed_mode"] == "split":
-    report_figures = [
-        (f"{result['report_title']} - Track", result["fig_track"]),
-        (f"{result['report_title']} - Sequence speed", result["fig_speed_online"]),
-        (f"{result['report_title']} - Line change speed", result["fig_speed_offline"]),
-    ]
-else:
-    report_figures = [
-        (f"{result['report_title']} - Track", result["fig_track"]),
-        (f"{result['report_title']} - Speed", result["fig_speed"]),
-    ]
-
-report_bytes = build_pdf_report(report_figures)
-
-report_filename = get_report_filename(
-    selection_type=selection_type,
-    selected_mode=selected_mode,
-    start_segment=start_segment,
-    end_segment=end_segment,
-    selected_segments=selected_segments,
-)
-
-st.download_button(
-    label="Print report",
-    data=report_bytes,
-    file_name=report_filename,
-    mime="application/pdf",
-)
