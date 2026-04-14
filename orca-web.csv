@@ -1,5 +1,7 @@
 ﻿Seq No,Line Name,Heading,Type,Incr,Orca Status,NRT Status,Reprocess,Start of Line (FGSP),,,End of Line (LGSP),,
-65,LD2511710P1065,90.0°,3D,1,Acquiring,Reprocess,Pending,8251,11-Apr-2026,23:27:29,16171,12-Apr-2026,16:33:56
+67,LD2511674P1067,90.0°,3D,1,Unfinished,Reprocess,Pending,15901,13-Apr-2026,17:42:26,19607,14-Apr-2026,01:07:22
+66,LD2511098P1066,270.0°,3D,1,Unfinished,Reprocess,Caveats,19305,13-Apr-2026,05:35:43,15900,13-Apr-2026,13:01:03
+65,LD2511710P1065,90.0°,3D,1,Unfinished,Reprocess,Caveats,8251,11-Apr-2026,23:27:29,19607,12-Apr-2026,23:41:30
 64,LD2511134P1064,270.0°,3D,1,Unfinished,Reprocess,Caveats,19305,10-Apr-2026,18:49:48,7949,11-Apr-2026,17:45:26
 63,LD2511746P1063,90.0°,3D,1,Finished,Reprocess,Caveats,8251,09-Apr-2026,13:59:01,19607,10-Apr-2026,14:54:25
 62,LD2512322P1062,270.0°,3D,1,Unfinished,Reprocess,Caveats,17339,08-Apr-2026,14:35:06,9699,09-Apr-2026,06:28:44
