@@ -27,3 +27,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Generated database backups
+24hrVesselPosition/database_*.csv
